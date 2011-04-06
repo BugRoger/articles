@@ -2,19 +2,19 @@ Howto Create a Working SSL-Certificate
 ======================================
 
 What you ultimately need is:
-1. A SSL certificate key
-2. A host specific SSL certificate
-3. Optionally, to validate client certificates for SSO, the SAP root certificate
+  1. A SSL certificate key
+  2. A host specific SSL certificate
+  3. Optionally, to validate client certificates for SSO, the SAP root certificate
 
 The good news is that you can create all of this yourself. The process works like this:
-1. Create a certificate key
-2. Create a certificate signing request
-3. Submit your request in a self service web form -> You get your host specific certificate. Yay!
-4. Download the SAP root certificate
-5. Remove the passphrase from your key
-6. Install your certifcates 
+  1. Create a certificate key
+  2. Create a certificate signing request
+  3. Submit your request in a self service web form -> You get your host specific certificate. Yay!
+  4. Download the SAP root certificate
+  5. Remove the passphrase from your key
+  6. Install your certifcates 
 
-Let's walk through these steps for a system which should be reachable by [ExpertOnDemand](https://expertondemand.wdf.sap.corp "https://expertondemand.wdf.sap.corp").
+Let's walk through these steps for a system which should be reachable by [https://expertondemand.wdf.sap.corp](https://expertondemand.wdf.sap.corp "https://expertondemand.wdf.sap.corp").
 
 Create the Certificate Key
 --------------------------
