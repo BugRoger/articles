@@ -163,15 +163,16 @@ The final step missing is to install the certificates into the webserver. In thi
 
 Copy the following files to your webserver. Using Chef it would look like this:
 
-    ["expertondemand.crt", "expertondemand.key", "sso_ca.pem"].each do |cert|
-      cookbook_file "#{node[:nginx][:dir]}/certs/#{cert}" do
-        source "certs/#{cert}"
-        mode "0644"
-        owner "root"
-        group "root"
-      end
-    end
-
+```ruby
+["expertondemand.crt", "expertondemand.key", "sso_ca.pem"].each do |cert|
+  cookbook_file "#{node[:nginx][:dir]}/certs/#{cert}" do
+    source "certs/#{cert}"
+    mode "0644"
+    owner "root"
+    group "root"
+  end
+end
+```
 
 To finalize the configuration you will have to create a configuration like this:
 
