@@ -18,6 +18,7 @@ The good news is that you can create all of this yourself. The process works lik
 
 Let's walk through these steps for a system which should be reachable by [https://expertondemand.wdf.sap.corp](https://expertondemand.wdf.sap.corp "https://expertondemand.wdf.sap.corp").
 
+
 Create the Certificate Key
 --------------------------
 
@@ -31,13 +32,11 @@ Create the Certificate Key
 
 You need to enter a passphrase. We will remove it again it a later stage. Generally it would be great to keep the passphrase. But who wants to type in the passphrase every time the server needs to be restarted?
 
-Per convention we use the hostname as filename for the key.
-
 
 Create a certificate signing request
 ------------------------------------
 
-Next we need to create a certificate signing request. It is very important that the request already contains the fully qualified hostname of the system the certificate will be used for. Otherwise the browsers are going to display phishing warnings. We are all used to those but as IT we should get this right for our systems.
+Next we need to create a certificate signing request. It is very important that the request already contains the fully qualified hostname of the system the certificate will be used for. Otherwise the browsers are going to display phishing warnings. Against common sense the FQDN hast to go into the `Common Name (eg, YOUR name)` field. 
 
     d038720@wdfm00259937a:ssl-certs $ openssl req -new -key expertondemand.key -out expertondemand.csr
     Enter pass phrase for expertondemand.key:
@@ -61,7 +60,7 @@ Next we need to create a certificate signing request. It is very important that 
     A challenge password []:
     An optional company name []:
 
-Note that the fully qualified hostname needs to go into the `Common Name` field. This must be the hostname that will be visible for the browser. Aliases or CNames won't work.
+Note again that the fully qualified hostname needs to go into the `Common Name` field. This must be the hostname that will be visible for the browser. Aliases or CNames won't work.
 
 
 Create the certificate using the security self service 
@@ -163,16 +162,31 @@ The final step missing is to install the certificates into the webserver. In thi
 
 Copy the following files to your webserver. Using Chef it would look like this:
 
-```ruby
-["expertondemand.crt", "expertondemand.key", "sso_ca.pem"].each do |cert|
-  cookbook_file "#{node[:nginx][:dir]}/certs/#{cert}" do
-    source "certs/#{cert}"
-    mode "0644"
-    owner "root"
-    group "root"
-  end
-end
-```
+    ["expertondemand.crt", "expertondemand.key", "sso_ca.pem"].each do |cert|
+      cookbook_file "#{node[:nginx][:dir]}/certs/#{cert}" do
+        source "certs/#{cert}"
+        mode "0644"
+        owner "root"
+        group "root"
+      end
+    end
+
+Certificates for different hosts can be stored in a cookbook like this. Chef's file specificity will take care to install the correct certificate for each host. The certificate key and the root certificate can be shared between hosts. 
+
+    d038720@wdfm00259937a:expertondemand $ tree files
+    files
+    |-- default
+    |   `-- certs
+    |       |-- expertondemand.key
+    |       `-- sso_ca.pem
+    |-- expertondemand.wdf.sap.corp
+    |   `-- certs
+    |-- host-expertondemand-staging.wdf.sap.corp
+    |   `-- certs
+    |       `-- expertondemand.crt
+    `-- host-expertondemand.wdf.sap.corp
+        `-- certs
+            `-- expertondemand.crt
 
 To finalize the configuration you will have to create a configuration like this:
 
